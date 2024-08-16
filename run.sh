@@ -6,6 +6,8 @@ PYTHON_SCRIPT="main.py"
 # Define the commit message
 COMMIT_MESSAGE="Auto-commit: $(date +'%Y-%m-%d %H:%M:%S')"
 
+cd "/data/workshop/deribit-storage/"
+
 # Run the Python script
 /app/octiv-pms/py311/bin/python3 $PYTHON_SCRIPT
 
