@@ -88,6 +88,6 @@ def export_to_csv(results: List[Dict[str, Any]], filename: str) -> None:
 
 
 if __name__ == "__main__":
-    filename = "{}.csv.gz".format(datetime.datetime.now(tz=datetime.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ"))
+    filename = "Deribit_options--{}.csv.gz".format(datetime.datetime.now(tz=datetime.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ"))
     tornado.ioloop.IOLoop.current().run_sync(subscribe_option_chain)
     export_to_csv(results, filename)
