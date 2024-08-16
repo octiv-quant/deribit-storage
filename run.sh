@@ -7,7 +7,7 @@ PYTHON_SCRIPT="main.py"
 COMMIT_MESSAGE="Auto-commit: $(date +'%Y-%m-%d %H:%M:%S')"
 
 # Run the Python script
-python3 $PYTHON_SCRIPT
+/app/octiv-pms/py311/bin/python3 $PYTHON_SCRIPT
 
 # Check if the Python script ran successfully
 if [ $? -eq 0 ]; then
