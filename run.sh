@@ -20,7 +20,7 @@ if [ $? -eq 0 ]; then
     git commit -m "$COMMIT_MESSAGE"
 
     # Optional: Push the changes to the remote repository
-    # git push origin main
+    git push origin main
 
     echo "Changes have been committed."
 else
