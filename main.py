@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 from typing import Any, Dict, List
 
 import orjson
@@ -60,10 +61,30 @@ async def subscribe_option_chain() -> None:
     except Exception as e:
         print(f"Error: {e}")
 
+
+def create_date_folder(base_path: str = '.') -> str:
+    # Get the current date in the format "YYYY-MM-DD"
+    folder_name = datetime.datetime.now().strftime('%Y-%m-%d')
+
+    # Create the full path
+    folder_path = os.path.join(base_path, folder_name)
+
+    # Create the directory if it doesn't exist
+    os.makedirs(folder_path, exist_ok=True)
+
+    return folder_path
+
+def create_file_path(folder_path: str, filename: str) -> str:
+    # Join the folder path with the filename
+    file_path = os.path.join(folder_path, filename)
+    return file_path
+
 def export_to_csv(results: List[Dict[str, Any]], filename: str) -> None:
+    folder_path = create_date_folder("data")
+    file_path = create_file_path(folder_path, filename)
     df = pd.DataFrame(results)
     df["datetime"] = pd.to_datetime(df['timestamp'], unit='ms').dt.strftime('%Y-%m-%d %H:%M:%S UTC')
-    df.to_csv(filename, compression='gzip')
+    df.to_csv(file_path, compression='gzip')
 
 
 if __name__ == "__main__":
