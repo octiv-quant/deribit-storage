@@ -2,16 +2,24 @@ name: Run Script Hourly
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Every hour
-  workflow_dispatch:      # Manual trigger
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Init sparse checkout (exclude existing data/)
+        run: |
+          mkdir repo
+          cd repo
+          git init
+          git remote add origin https://github.com/${{ github.repository }}.git
+          git config core.sparseCheckout true
+          echo "/*" > .git/info/sparse-checkout
+          echo "!data/" >> .git/info/sparse-checkout
+          git pull origin ${{ github.ref }}
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v4
@@ -20,21 +28,23 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd repo
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Make run.sh executable
-        run: chmod +x run.sh
+        run: chmod +x repo/run.sh
 
-      - name: Run the script
-        run: ./run.sh
+      - name: Run script
+        run: ./repo/run.sh
 
-      - name: Push changes
+      - name: Commit and push new/changed data/
         run: |
+          cd repo
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add .
-          git commit -m "Auto-commit: $(date +'%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
-          git push origin main
+          git add data/ || true  # if data/ exists
+          git commit -am "Auto-commit: $(date +'%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
+          git push origin ${{ github.ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
